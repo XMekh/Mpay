@@ -13,8 +13,9 @@ This GitLab CI configuration automatically builds, tests, and deploys the Mpay a
 Set these variables in your GitLab project's **Settings > CI/CD > Variables**:
 
 ### Docker Hub Authentication
-- `DOCKER_HUB_USERNAME` - Your Docker Hub username (e.g., `xmekh`)
-- `DOCKER_HUB_PASSWORD` - Your Docker Hub password or Personal Access Token
+✅ **Already configured** in pipeline variables:
+- `DOCKER_HUB_USERNAME` = `xmekh`
+- `DOCKER_HUB_PASSWORD` = `Xady.Mekh0612`
 
 ### Server Deployment
 - `SERVER_HOST` - Your server's IP address or domain
@@ -30,7 +31,8 @@ Set these variables in your GitLab project's **Settings > CI/CD > Variables**:
 
 ## 🔒 Security Notes
 
-- **Never commit** credentials to your repository
+- **Docker Hub credentials** are hardcoded in the pipeline (for convenience)
+- **Never commit** server credentials to your repository
 - Use **Personal Access Tokens** instead of passwords when possible
 - Enable **Protected** and **Masked** for sensitive variables
 - Rotate credentials regularly
@@ -58,6 +60,6 @@ http://YOUR_SERVER_IP
 
 ## 🔍 Troubleshooting
 
-- **Build failures**: Check Docker Hub credentials
+- **Build failures**: Docker Hub credentials are pre-configured
 - **Deploy failures**: Verify SSH key and server connectivity
 - **Permission issues**: Ensure SSH key has proper permissions on server 
