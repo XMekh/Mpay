@@ -8,8 +8,6 @@ variables:
   DOCKER_TLS_CERTDIR: "/certs"
   DOCKER_HUB_REGISTRY: docker.io
   IMAGE_NAME: xmekh/mpay
-  DOCKER_HUB_USERNAME: xmekh
-  DOCKER_HUB_PASSWORD: Xady.Mekh0612
 
 test:
   stage: test
