@@ -1,0 +1,21 @@
+---
+# Docker registry configuration
+registry: "{{ lookup('env', 'DOCKER_REGISTRY') | default('docker.io') }}"
+image_name: "{{ lookup('env', 'DOCKER_IMAGE_NAME') | default('mpay-app') }}"
+
+# Server configuration
+server_hostname: "{{ inventory_hostname }}"
+timezone: UTC
+
+# Package versions
+docker_version: "5:24.0.7-1~ubuntu.22.04~jammy"
+docker_compose_version: "2.20.3"
+
+# Security settings
+ssh_port: 22
+http_port: 80
+https_port: 443
+
+# User configuration
+deploy_user: deploy
+deploy_group: deploy 

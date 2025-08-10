@@ -1,0 +1,64 @@
+---
+- name: Install essential packages
+  apt:
+    name:
+      - curl
+      - wget
+      - unzip
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - htop
+      - vim
+      - git
+    state: present
+    update_cache: true
+
+- name: Set timezone
+  timezone:
+    name: UTC
+
+- name: Configure hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Update /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1 {{ inventory_hostname }}"
+    regexp: "^127\\.0\\.0\\.1.*{{ inventory_hostname }}"
+    state: present
+
+- name: Create deploy user
+  user:
+    name: deploy
+    shell: /bin/bash
+    groups: sudo,docker
+    append: true
+    generate_ssh_key: true
+    ssh_key_bits: 2048
+    ssh_key_file: /home/deploy/.ssh/id_rsa
+
+- name: Add deploy user to sudoers
+  lineinfile:
+    path: /etc/sudoers
+    line: "deploy ALL=(ALL) NOPASSWD:ALL"
+    state: present
+    validate: "visudo -cf %s"
+
+- name: Create .ssh directory for deploy user
+  file:
+    path: /home/deploy/.ssh
+    state: directory
+    owner: deploy
+    group: deploy
+    mode: '0700'
+
+- name: Copy authorized keys for deploy user
+  authorized_key:
+    user: deploy
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    manage_dir: false 

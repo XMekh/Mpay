@@ -1,0 +1,8 @@
+# Ansible Collections
+ansible.posix
+community.docker
+community.general
+
+# Python dependencies (if using custom modules)
+# requests>=2.25.0
+# boto3>=1.26.0 
