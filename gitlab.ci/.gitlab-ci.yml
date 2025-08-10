@@ -6,8 +6,8 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
-  REGISTRY: $CI_REGISTRY
-  IMAGE_NAME: $CI_PROJECT_PATH
+  DOCKER_HUB_REGISTRY: docker.io
+  IMAGE_NAME: xmekh/mpay
 
 test:
   stage: test
@@ -29,11 +29,11 @@ build:
   services:
     - docker:20.10.16-dind
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD $DOCKER_HUB_REGISTRY
   script:
-    - docker build -t $REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA -t $REGISTRY/$IMAGE_NAME:latest ./mpay_app
-    - docker push $REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $REGISTRY/$IMAGE_NAME:latest
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest ./mpay_app
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $IMAGE_NAME:latest
   only:
     - main
     - develop
@@ -51,11 +51,11 @@ deploy:
   script:
     - |
       ssh -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
-        # Login to registry
-        echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+        # Login to Docker Hub
+        echo "$DOCKER_HUB_PASSWORD" | docker login -u $DOCKER_HUB_USERNAME --password-stdin docker.io
         
         # Pull latest image
-        docker pull $REGISTRY/$IMAGE_NAME:latest
+        docker pull $IMAGE_NAME:latest
         
         # Stop and remove existing container
         docker stop mpay-app || true
@@ -67,7 +67,7 @@ deploy:
           --restart unless-stopped \
           -p 80:80 \
           -e NODE_ENV=production \
-          $REGISTRY/$IMAGE_NAME:latest
+          $IMAGE_NAME:latest
         
         # Clean up old images
         docker image prune -f
